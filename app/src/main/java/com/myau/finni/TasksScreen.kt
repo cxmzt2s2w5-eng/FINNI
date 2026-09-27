@@ -55,7 +55,9 @@ fun TasksScreen(
     var completedTasks by remember {
         mutableStateOf(
             progressManager
-                .getCompletedTasks()
+                .load()
+                .completedTasks
+                .toSet()
         )
     }
 
@@ -90,15 +92,28 @@ fun TasksScreen(
             onComplete = {
 
 
-                progressManager
-                    .completeTask(
-                        selectedTask!!.id
+                val current =
+                    progressManager.load()
+
+
+                progressManager.save(
+                    current.copy(
+                        completedTasks =
+                            current.completedTasks +
+                                    selectedTask!!.id,
+
+                        coins =
+                            current.coins +
+                                    selectedTask!!.reward
                     )
+                )
 
 
                 completedTasks =
                     progressManager
-                        .getCompletedTasks()
+                        .load()
+                        .completedTasks
+                        .toSet()
 
             },
 

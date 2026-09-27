@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.myau.finni.ui.theme.FINNITheme
 
 class MainActivity : ComponentActivity() {
@@ -20,54 +21,43 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-
             FINNITheme {
 
-                var currentScreen by remember {
-                    mutableStateOf("tutorial")
+                val context = LocalContext.current
+                val vm = remember { GameViewModel(ProgressManager(context)) }
+
+                // если профиль уже есть — сразу на главный, иначе туториал
+                var screen by remember {
+                    mutableStateOf(if (vm.hasProfile) "home" else "tuto")
                 }
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { _ ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
 
-                    when (currentScreen) {
+                    when (screen) {
 
-                        "tutorial" -> {
+                        "tuto" -> TutoScreen(
+                            onFinish = { screen = "custom" }
+                        )
 
-                            TasksScreen()
-                        }
+                        "custom" -> FinniCustomScreen(
+                            onBack = { screen = "tuto" },
+                            onDone = { screen = "dream" }
+                        )
 
-                        "custom" -> {
+                        "dream" -> DreamScreen(
+                            onBack = { screen = "custom" },
+                            onDone = { screen = "home" }
+                        )
 
-                            FinniCustomScreen(
-                                onBack = {
-                                    currentScreen = "tutorial"
-                                },
+                        "home" -> HomeScreen(
+                            vm = vm,
+                            onNavigate = { target -> screen = target }
+                        )
 
-                                onDone = {
-                                    currentScreen = "dream"
-                                }
-                            )
-                        }
+                        "shop" -> ShopScreen()
 
-                        "dream" -> {
+                        "tasks" -> TasksScreen()
 
-                            DreamScreen(
-                                onBack = {
-                                    currentScreen = "custom"
-                                },
-
-                                onDone = {
-                                    currentScreen = "home"
-                                }
-                            )
-                        }
-
-                        "home" -> {
-
-                            HomeScreen()
-                        }
                     }
                 }
             }

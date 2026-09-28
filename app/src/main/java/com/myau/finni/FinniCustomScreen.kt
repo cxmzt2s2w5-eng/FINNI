@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun FinniCustomScreen(
+    vm: GameViewModel,
     onBack: () -> Unit = {},
     onDone: () -> Unit = {}
 ) {
@@ -297,6 +298,13 @@ fun FinniCustomScreen(
 
         Button(
             onClick = {
+                val colorName = when (selectedColor) {
+                    0 -> "yellow"
+                    1 -> "blue"
+                    else -> "purple"
+                }
+
+                vm.setPet(petName, colorName)
                 onDone()
             },
             modifier = Modifier

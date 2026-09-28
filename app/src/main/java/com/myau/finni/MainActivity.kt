@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val vm = remember { GameViewModel(ProgressManager(context)) }
 
-                // если профиль уже есть — сразу на главный, иначе туториал
                 var screen by remember {
                     mutableStateOf(if (vm.hasProfile) "home" else "tuto")
                 }
@@ -40,11 +39,13 @@ class MainActivity : ComponentActivity() {
                         )
 
                         "custom" -> FinniCustomScreen(
+                            vm = vm,
                             onBack = { screen = "tuto" },
                             onDone = { screen = "dream" }
                         )
 
                         "dream" -> DreamScreen(
+                            vm = vm,
                             onBack = { screen = "custom" },
                             onDone = { screen = "home" }
                         )
@@ -54,10 +55,45 @@ class MainActivity : ComponentActivity() {
                             onNavigate = { target -> screen = target }
                         )
 
-                        "shop" -> ShopScreen()
+                        "plan" -> PlanScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
 
-                        "tasks" -> TasksScreen()
+                        "shop" -> ShopScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
 
+                        "tasks" -> TasksScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
+
+                        "savings" -> SavingsScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
+
+                        "summary" -> SummaryScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
+
+                        "progress" -> ProgressScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
+
+                        "adult" -> AdultScreen(
+                            vm = vm,
+                            onBack = { screen = "home" }
+                        )
+
+                        else -> HomeScreen(
+                            vm = vm,
+                            onNavigate = { target -> screen = target }
+                        )
                     }
                 }
             }

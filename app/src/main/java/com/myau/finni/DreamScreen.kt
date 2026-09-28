@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DreamScreen(
+    vm: GameViewModel,
     onBack: () -> Unit = {},
     onDone: () -> Unit = {}
 ) {
@@ -195,6 +196,14 @@ fun DreamScreen(
 
         Button(
             onClick = {
+                val dream = dreams[selectedDream]
+
+                val price = dream.third
+                    .filter { it.isDigit() }
+                    .toIntOrNull()
+                    ?: 0
+
+                vm.setGoal(dream.second, price)
                 onDone()
             },
             modifier = Modifier

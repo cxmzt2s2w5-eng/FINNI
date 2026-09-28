@@ -24,17 +24,12 @@ import com.myau.finni.tasktypes.*
 
 @Composable
 fun TasksScreen(
+    vm: GameViewModel,
     onBack: () -> Unit = {}
 ) {
 
     val context =
         LocalContext.current
-
-
-    val progressManager =
-        remember {
-            ProgressManager(context)
-        }
 
 
     var tasks by remember {
@@ -52,14 +47,8 @@ fun TasksScreen(
     }
 
 
-    var completedTasks by remember {
-        mutableStateOf(
-            progressManager
-                .load()
-                .completedTasks
-                .toSet()
-        )
-    }
+    val completedTasks =
+        vm.state.completedTasks.toSet()
 
 
 
@@ -92,28 +81,10 @@ fun TasksScreen(
             onComplete = {
 
 
-                val current =
-                    progressManager.load()
-
-
-                progressManager.save(
-                    current.copy(
-                        completedTasks =
-                            current.completedTasks +
-                                    selectedTask!!.id,
-
-                        coins =
-                            current.coins +
-                                    selectedTask!!.reward
-                    )
+                vm.completeTask(
+                    selectedTask!!.id,
+                    selectedTask!!.reward
                 )
-
-
-                completedTasks =
-                    progressManager
-                        .load()
-                        .completedTasks
-                        .toSet()
 
             },
 

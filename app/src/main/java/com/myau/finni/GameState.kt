@@ -2,12 +2,16 @@ package com.myau.finni
 
 data class GameState(
     // --- питомец ---
+    // --- питомец ---
     val petName: String = "Финни",
+    val petType: String = "cat",
     val petColor: String = "blue",
     val petStage: Int = 1,
+    val petMood: String = "neutral",
     val satiety: Int = 50,
     val care: Int = 50,
     val mood: Int = 50,
+
 
     // --- деньги ---
     val coins: Int = 100,

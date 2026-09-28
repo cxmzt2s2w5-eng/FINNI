@@ -21,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 @Composable
 fun HomeScreen(
     vm: GameViewModel,
@@ -94,17 +97,47 @@ fun HomeScreen(
 
         // --- питомец ---
         FinniCard(bg = PrimarySoft) {
+
             Text(
                 "Стадия ${s.petStage} · ${stageName(s.petStage)}",
                 fontSize = 16.sp,
                 color = Primary,
                 fontWeight = FontWeight.Bold
             )
+
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(petFace(s.mood), fontSize = 110.sp)
+
+
+                PetPreview(
+
+                    appearance = PetAppearance(
+
+                        type = s.petType,
+
+                        color = s.petColor,
+
+                        stage = s.petStage,
+
+                        mood = when {
+
+                            s.mood >= 66 ->
+                                "happy"
+
+                            s.mood >= 33 ->
+                                "neutral"
+
+                            else ->
+                                "sad"
+                        }
+
+                    )
+
+                )
+
             }
         }
 
@@ -141,10 +174,52 @@ fun HomeScreen(
         }
 
         Spacer(Modifier.height(8.dp))
-        FinniButton("Завершить день ${s.day}") { onNavigate("summary") }
+        var showFinishError by remember {
+            mutableStateOf(false)
+        }
+        val s = vm.state
+        FinniButton(
+            if(vm.canFinishDay())
+                "Завершить день ${s.day}"
+            else
+                "🔒 Завершить день"
+        ) {
 
+            if(vm.canFinishDay()) {
+
+                onNavigate("summary")
+
+            } else {
+
+                showFinishError = true
+
+            }
+        }
         Spacer(Modifier.height(16.dp))
+        if(showFinishError){
 
+            FinniCard(
+                bg = Surface2
+            ){
+
+                Text(
+                    "Чтобы завершить день:",
+                    fontWeight = FontWeight.Bold,
+                    color = Ink
+                )
+
+
+                vm.finishRequirements()
+                    .forEach {
+
+                        Text(
+                            "• $it",
+                            color = Muted
+                        )
+
+                    }
+            }
+        }
         // --- нижняя навигация ---
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -166,12 +241,6 @@ private fun stageName(stage: Int): String = when (stage) {
     3 -> "взрослый"
     2 -> "подросток"
     else -> "малыш"
-}
-
-private fun petFace(mood: Int): String = when {
-    mood >= 66 -> "😺"
-    mood >= 33 -> "🐱"
-    else -> "🙀"
 }
 
 private fun levelText(value: Int): String = when {

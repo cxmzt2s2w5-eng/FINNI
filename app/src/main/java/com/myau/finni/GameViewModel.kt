@@ -15,10 +15,30 @@ class GameViewModel(private val progress: ProgressManager) : ViewModel() {
 
     // ---------- питомец и цель ----------
 
-    fun setPet(name: String, color: String) {
-        update(state.copy(petName = name, petColor = color))
-    }
+    fun setPet(
+        name:String,
+        type:String,
+        color:String
+    ){
 
+        update(
+            state.copy(
+                petName = name,
+                petType = type,
+                petColor = color
+            )
+        )
+    }
+    fun updatePetMood(
+        mood:String
+    ){
+
+        update(
+            state.copy(
+                petMood = mood
+            )
+        )
+    }
     fun setGoal(title: String, price: Int) {
         update(state.copy(goalTitle = title, goalPrice = price))
     }
@@ -114,6 +134,44 @@ class GameViewModel(private val progress: ProgressManager) : ViewModel() {
         return (100 - deviation * 100 / income).coerceIn(0, 100)
     }
 
+    // ---------- проверка завершения дня ----------
+
+    fun canFinishDay(): Boolean {
+
+        return state.planConfirmed &&
+                state.completedTasks.size >= 2 &&
+                state.factSave > 0
+    }
+
+
+    fun finishRequirements(): List<String> {
+
+        val result = mutableListOf<String>()
+
+
+        if (!state.planConfirmed) {
+            result.add(
+                "📋 Сначала составь план бюджета"
+            )
+        }
+
+
+        if (state.completedTasks.size < 2) {
+            result.add(
+                "🧩 Выполни ещё ${2 - state.completedTasks.size} задания"
+            )
+        }
+
+
+        if (state.factSave <= 0) {
+            result.add(
+                "🐷 Отложи немного денег в копилку"
+            )
+        }
+
+
+        return result
+    }
     fun endDay() {
         val score = dayScore()
         val points = state.stagePoints + score
@@ -134,7 +192,8 @@ class GameViewModel(private val progress: ProgressManager) : ViewModel() {
                 factNeed = 0,
                 factWant = 0,
                 factSave = 0,
-                purchased = emptyList()
+                purchased = emptyList(),
+                completedTasks = emptyList()
             )
         )
     }

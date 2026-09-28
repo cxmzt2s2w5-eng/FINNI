@@ -40,8 +40,9 @@ class MainActivity : ComponentActivity() {
 
                         "custom" -> FinniCustomScreen(
                             vm = vm,
-                            onBack = { screen = "tuto" },
-                            onDone = { screen = "dream" }
+                            onDone = {
+                                screen = "dream"
+                            }
                         )
 
                         "dream" -> DreamScreen(

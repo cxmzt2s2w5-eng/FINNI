@@ -1,10 +1,8 @@
 package com.myau.finni
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -46,26 +43,10 @@ fun HomeScreen(
 
         // --- фон комнаты ---
         Image(
-            painter = painterResource(R.drawable.back),
+            painter = painterResource(R.drawable.background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
-        )
-
-        // светлая вуаль сверху и снизу, середина остаётся яркой
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.75f),
-                            Color.White.copy(alpha = 0.05f),
-                            Color.White.copy(alpha = 0.05f),
-                            Color.White.copy(alpha = 0.85f)
-                        )
-                    )
-                )
         )
 
         Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
@@ -100,74 +81,76 @@ fun HomeScreen(
             Spacer(Modifier.height(12.dp))
 
             // --- деньги ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                MoneyPill(
-                    icon = "🪙",
-                    label = "Кошелёк",
-                    value = s.coins,
-                    accent = Yellow,
-                    modifier = Modifier.weight(1f)
-                )
-                MoneyPill(
-                    icon = "🐷",
-                    label = "Копилка",
-                    value = s.savings,
-                    accent = Mint,
-                    modifier = Modifier.weight(1f)
-                ) { onNavigate("savings") }
-            }
-
-            Spacer(Modifier.height(10.dp))
 
             // --- цель ---
             GoalStrip(
-                title = if (s.goalTitle.isBlank()) "Выбери мечту" else s.goalTitle,
+                title = if (s.goalTitle.isBlank())
+                    "Выбери мечту"
+                else
+                    s.goalTitle,
+
                 saved = s.savings,
-                price = s.goalPrice
-            ) { onNavigate("savings") }
+
+                price = s.goalPrice,
+
+                coins = s.coins
+
+            ) {
+                onNavigate("savings")
+            }
+
+            Spacer(Modifier.height(235.dp))
 
             // --- питомец: главный герой экрана ---
-            Box(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            FinniCard(bg = Color(0)) {
 
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50))
-                            .background(Primary)
-                            .padding(horizontal = 14.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            "Стадия ${s.petStage} · ${stageName(s.petStage)}",
-                            fontSize = 14.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+
+                    PetPreview(
+
+                        appearance = PetAppearance(
+
+                            type = s.petType,
+
+                            color = s.petColor,
+
+                            stage = s.petStage,
+
+                            mood = when {
+
+                                s.mood >= 66 ->
+                                    "happy"
+
+                                s.mood >= 33 ->
+                                    "neutral"
+
+                                else ->
+                                    "sad"
+                            }
+
                         )
-                    }
 
-                    Spacer(Modifier.height(6.dp))
+                    )
 
-                    // ЗДЕСЬ БУДЕТ КАРТИНКА ПИТОМЦА ОТ ДИЗАЙНЕРА
-                    Text(petFace(s.mood), fontSize = 150.sp)
                 }
             }
 
             // --- состояние ---
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                StatChip("🍲", "Сытость", s.satiety, Peach, Modifier.weight(1f))
-                StatChip("🧴", "Уход", s.care, Blue, Modifier.weight(1f))
-                StatChip("😊", "Настроение", s.mood, Yellow, Modifier.weight(1f))
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                StatChip("🍲", "Сытость", s.satiety, Peach, Modifier.weight(1f))
+//                StatChip("🧴", "Уход", s.care, Blue, Modifier.weight(1f))
+//                StatChip("😊", "Настроение", s.mood, Yellow, Modifier.weight(1f))
+//            }
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(0.dp))
 
             // --- главное действие дня ---
             if (!s.planConfirmed) {
@@ -176,52 +159,7 @@ fun HomeScreen(
                 BigActionButton("🌙  Завершить день ${s.day}", Peach) { onNavigate("summary") }
             }
 
-            Spacer(Modifier.height(10.dp))
 
-            // --- нижняя навигация, один ряд ---
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color.White.copy(alpha = 0.92f))
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                NavItem(
-                    R.drawable.icon_home,
-                    "Дом",
-                    true
-                ) {}
-
-                NavItem(
-                    R.drawable.icon_plan,
-                    "План",
-                    false
-                ) { onNavigate("plan") }
-
-
-                NavItem(
-                    R.drawable.icon_shop,
-                    "Магазин",
-                    false
-                ) { onNavigate("shop") }
-
-
-                NavItem(
-                    R.drawable.icon_tasks,
-                    "Задания",
-                    false
-                ) { onNavigate("tasks") }
-
-
-                NavItem(
-                    R.drawable.icon_savings,
-                    "Копилка",
-                    false
-                ) { onNavigate("savings") }
-            }
-
-            Spacer(Modifier.height(14.dp))
         }
     }
 }
@@ -231,86 +169,100 @@ fun HomeScreen(
 // ---------------------------------------------------------------------------
 
 @Composable
-private fun MoneyPill(
-    icon: String,
-    label: String,
-    value: Int,
-    accent: Color,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null
-) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.92f))
-            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .clip(CircleShape)
-                .background(accent.copy(alpha = 0.30f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(icon, fontSize = 20.sp)
-        }
-
-        Spacer(Modifier.width(10.dp))
-
-        Column {
-            Text(label, fontSize = 13.sp, color = Muted, fontWeight = FontWeight.Bold)
-            Text("$value", fontSize = 22.sp, color = Ink, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
-@Composable
 private fun GoalStrip(
     title: String,
     saved: Int,
     price: Int,
+    coins: Int,
     onClick: () -> Unit
 ) {
-    val progress = if (price == 0) 0f else (saved.toFloat() / price).coerceIn(0f, 1f)
+
+    val progress =
+        if (price == 0)
+            0f
+        else
+            (saved.toFloat() / price)
+                .coerceIn(0f, 1f)
+
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .background(Color.White.copy(alpha = 0.92f))
-            .clickable { onClick() }
-            .padding(horizontal = 14.dp, vertical = 10.dp)
+            .clickable {
+                onClick()
+            }
+            .padding(
+                horizontal = 14.dp,
+                vertical = 12.dp
+            )
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
             Text(
-                "🎯  $title",
-                fontSize = 15.sp,
+                "🎯 $title",
+                fontSize = 16.sp,
                 color = Ink,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            Text("$saved / $price", fontSize = 14.sp, color = Primary, fontWeight = FontWeight.Bold)
+
+
+            Text(
+                "$saved / $price 🪙",
+                fontSize = 14.sp,
+                color = Primary,
+                fontWeight = FontWeight.Bold
+            )
+
         }
 
-        Spacer(Modifier.height(8.dp))
+
+        Spacer(
+            Modifier.height(8.dp)
+        )
+
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp)
-                .clip(RoundedCornerShape(50))
+                .clip(
+                    RoundedCornerShape(50)
+                )
                 .background(PrimarySoft)
-        ) {
+        ){
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress)
                     .height(10.dp)
-                    .clip(RoundedCornerShape(50))
+                    .clip(
+                        RoundedCornerShape(50)
+                    )
                     .background(Primary)
             )
+
         }
+
+
+        Spacer(
+            Modifier.height(8.dp)
+        )
+
+
+        Text(
+            "💰 Баланс: $coins 🪙",
+            fontSize = 15.sp,
+            color = Ink,
+            fontWeight = FontWeight.Bold
+        )
+
     }
 }
 
@@ -437,11 +389,6 @@ private fun NavItem(
 // Вспомогательные функции
 // ---------------------------------------------------------------------------
 
-private fun stageName(stage: Int): String = when (stage) {
-    3 -> "взрослый"
-    2 -> "подросток"
-    else -> "малыш"
-}
 
 private fun petFace(mood: Int): String = when {
     mood >= 66 -> "😺"

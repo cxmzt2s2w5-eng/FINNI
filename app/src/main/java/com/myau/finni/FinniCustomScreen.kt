@@ -102,13 +102,6 @@ fun FinniCustomScreen(
         // -----------------------------
 
 
-        Text(
-            "Кто будет Финни?",
-            fontSize=18.sp,
-            fontWeight=FontWeight.Bold
-        )
-
-
         Row(
 
             modifier =

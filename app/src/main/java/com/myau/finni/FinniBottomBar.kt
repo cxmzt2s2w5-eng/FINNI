@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,16 +26,19 @@ fun FinniBottomBar(
     Row(
 
         modifier = Modifier
+            .navigationBarsPadding()
             .fillMaxWidth()
             .padding(
                 horizontal = 12.dp,
                 vertical = 8.dp
             )
+            // плотная кремовая панель: текст экрана под ней не просвечивает
+            .shadow(8.dp, RoundedCornerShape(24.dp))
             .clip(
                 RoundedCornerShape(24.dp)
             )
             .background(
-                Color.White.copy(alpha = 0.6f)
+                CardCream.copy(alpha = 0.98f)
             )
             .padding(vertical = 8.dp),
 

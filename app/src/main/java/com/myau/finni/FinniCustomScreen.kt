@@ -234,29 +234,13 @@ fun FinniCustomScreen(
 
 
 
-        Button(
-
-            onClick={
-
-                vm.setPet(
-                    name,
-                    type,
-                    color
-                )
-
-                onDone()
-
-            },
-
-            modifier=
-                Modifier.fillMaxWidth()
-
-        ){
-
-            Text(
-                "Готово →"
+        NextButton("Готово") {     // общая кнопка «вперёд»
+            vm.setPet(
+                name,
+                type,
+                color
             )
-
+            onDone()
         }
 
     }

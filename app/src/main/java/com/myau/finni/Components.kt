@@ -3,6 +3,11 @@ import androidx.compose.ui.graphics.Color
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,15 +27,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/** Основная кнопка — та же фиолетовая капсула, что и NextButton, но без стрелки */
 @Composable
 fun FinniButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth().heightIn(min = 56.dp),
-        shape = RoundedCornerShape(18.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Primary)
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .heightIn(min = 56.dp)
+            .shadow(6.dp, RoundedCornerShape(28.dp))
+            .clip(RoundedCornerShape(28.dp))
+            .background(Brush.verticalGradient(listOf(Color(0xFF9A7BFF), Primary)))
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Text(text = text, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+        CoinText(text = text, fontSize = 18.sp, color = Color.White, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -62,17 +74,15 @@ fun ScreenTitle(text: String) {
     )
 }
 
+/** Шапка для экранов без картинки-фона — та же, что на остальных */
 @Composable
 fun TopBar(title: String, onBack: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextButton(onClick = onBack) {
-            Text(text = "← Назад", fontSize = 17.sp, color = Primary)
-        }
-        Text(text = title, fontSize = 19.sp, fontWeight = FontWeight.Bold, color = Ink)
-    }
+    ScreenHeader(
+        title = title,
+        onBack = onBack,
+        fontSize = 20.sp,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
 }
 
 @Composable

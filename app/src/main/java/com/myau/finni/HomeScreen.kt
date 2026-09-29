@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -55,10 +58,17 @@ fun HomeScreen(
 
             // --- верх: день и круглые кнопки ---
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().statusBarsPadding(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                // день и название — в такой же кремовой плашке, как заголовки других экранов
+                Column(
+                    modifier = Modifier
+                        .shadow(3.dp, RoundedCornerShape(18.dp))
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(CardCream.copy(alpha = CardAlpha))
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                ) {
                     Text(
                         "День ${s.day} из 5",
                         fontSize = 14.sp,
@@ -67,15 +77,17 @@ fun HomeScreen(
                     )
                     Text(
                         "Дом ${s.petName}",
-                        fontSize = 26.sp,
+                        fontSize = 24.sp,
                         color = Ink,
                         fontWeight = FontWeight.Bold
                     )
                 }
 
-                RoundButton("📈") { onNavigate("progress") }
+                Spacer(Modifier.weight(1f))
+
+                RoundButton("icon_progress", "📈") { onNavigate("progress") }
                 Spacer(Modifier.width(8.dp))
-                RoundButton("👨‍👩‍👧") { onNavigate("adult") }
+                RoundButton("icon_parents", "👨‍👩‍👧") { onNavigate("adult") }
             }
 
             Spacer(Modifier.height(12.dp))
@@ -176,93 +188,69 @@ private fun GoalStrip(
     coins: Int,
     onClick: () -> Unit
 ) {
-
-    val progress =
-        if (price == 0)
-            0f
-        else
-            (saved.toFloat() / price)
-                .coerceIn(0f, 1f)
-
+    val progress = if (price == 0) 0f else (saved.toFloat() / price).coerceIn(0f, 1f)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .background(Color.White.copy(alpha = 0.92f))
-            .clickable {
-                onClick()
-            }
-            .padding(
-                horizontal = 14.dp,
-                vertical = 12.dp
-            )
+            .shadow(4.dp, RoundedCornerShape(22.dp))
+            .clip(RoundedCornerShape(22.dp))
+            .background(CardCream.copy(alpha = CardAlpha))
+            .clickable { onClick() }
+            .padding(horizontal = 14.dp, vertical = 12.dp)
     ) {
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
+        // мечта: картинка мечты, название, сколько накоплено
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppIcon(dreamIconName(title), "🎯", 34.dp)
+            Spacer(Modifier.width(8.dp))
             Text(
-                "🎯 $title",
+                title,
                 fontSize = 16.sp,
                 color = Ink,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-
-
-            Text(
+            CoinText(
                 "$saved / $price 🪙",
                 fontSize = 14.sp,
                 color = Primary,
                 fontWeight = FontWeight.Bold
             )
-
         }
 
+        Spacer(Modifier.height(8.dp))
 
-        Spacer(
-            Modifier.height(8.dp)
-        )
-
-
+        // золотая полоска, как в копилке
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(10.dp)
-                .clip(
-                    RoundedCornerShape(50)
-                )
-                .background(PrimarySoft)
-        ){
-
+                .height(12.dp)
+                .clip(RoundedCornerShape(50))
+                .background(Color(0xFFFFF1C4))
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress)
-                    .height(10.dp)
-                    .clip(
-                        RoundedCornerShape(50)
-                    )
-                    .background(Primary)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Brush.horizontalGradient(listOf(Color(0xFFFFD75E), Color(0xFFF2B51F))))
             )
-
         }
 
+        Spacer(Modifier.height(10.dp))
 
-        Spacer(
-            Modifier.height(8.dp)
-        )
+        // кошелёк и копилка
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppIcon("icon_budget", "💰", 30.dp)
+            Spacer(Modifier.width(6.dp))
+            CoinText("Кошелёк: $coins 🪙", fontSize = 14.sp, color = Ink, fontWeight = FontWeight.Bold)
 
+            Spacer(Modifier.weight(1f))
 
-        Text(
-            "💰 Баланс: $coins 🪙",
-            fontSize = 15.sp,
-            color = Ink,
-            fontWeight = FontWeight.Bold
-        )
-
+            AppIcon("icon_savings", "🐷", 30.dp)
+            Spacer(Modifier.width(6.dp))
+            CoinText("Копилка: $saved 🪙", fontSize = 14.sp, color = Ink, fontWeight = FontWeight.Bold)
+        }
     }
 }
 
@@ -315,8 +303,9 @@ private fun BigActionButton(text: String, color: Color, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(58.dp)
-            .clip(RoundedCornerShape(22.dp))
-            .background(color)
+            .shadow(7.dp, RoundedCornerShape(29.dp))
+            .clip(RoundedCornerShape(29.dp))
+            .background(Brush.verticalGradient(listOf(color.copy(alpha = 0.75f), color)))
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -324,17 +313,19 @@ private fun BigActionButton(text: String, color: Color, onClick: () -> Unit) {
     }
 }
 
+/** Круглая кнопка-картинка сверху справа (прогресс, для взрослых) */
 @Composable
-private fun RoundButton(icon: String, onClick: () -> Unit) {
+private fun RoundButton(iconName: String, fallback: String, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .size(46.dp)
+            .size(50.dp)
+            .shadow(4.dp, CircleShape)
             .clip(CircleShape)
-            .background(Color.White.copy(alpha = 0.92f))
+            .background(Color.White)
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text(icon, fontSize = 20.sp)
+        AppIcon(iconName, fallback, 36.dp)
     }
 }
 

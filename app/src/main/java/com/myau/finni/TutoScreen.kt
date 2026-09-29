@@ -68,41 +68,10 @@ fun TutoScreen(
             ) {
 
                 if (page > 0) {
-                    Box(
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(44.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFFFF7F7F))
-                            .clickable {
-                                page--
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_arrow_right),
-                                contentDescription = "Назад",
-                                modifier = Modifier
-                                    .size(18.dp)
-                                    .scale(scaleX = -1f, scaleY = 1f)
-                            )
-
-                            Spacer(modifier = Modifier.size(6.dp))
-
-                            Text(
-                                text = "Назад",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    }
+                    BackArrowButton { page-- }   // общая кнопка «назад»
                 } else {
                     Spacer(
-                        modifier = Modifier.size(42.dp)
+                        modifier = Modifier.size(46.dp)
                     )
                 }
                 Row(
@@ -143,9 +112,8 @@ fun TutoScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            TutorialNavigationButton(
-                text = if (page < 2) "Дальше" else "Начать игру",
-                back = false
+            NextButton(                    // общая кнопка «вперёд»
+                text = if (page < 2) "Дальше" else "Начать игру"
             ) {
                 if (page < 2) {
                     page++
@@ -211,7 +179,7 @@ private fun TutorialWelcome() {
         ) {
 
             Image(
-                painter = painterResource(R.drawable.finni_wave),
+                painter = painterResource(R.drawable.finni_wave1),
                 contentDescription = "Финни приветствует",
                 modifier = Modifier.size(260.dp)
             )
@@ -326,7 +294,7 @@ private fun TutorialDay() {
 
         TutorialStep(
             number = "1",
-            icon = "🪙",
+            icon = "coin",
             title = "Получаешь деньги",
             description = "В начале дня у тебя появляется новый бюджет."
         )
@@ -335,7 +303,7 @@ private fun TutorialDay() {
 
         TutorialStep(
             number = "2",
-            icon = "💰",
+            icon = "icon_budget",
             title = "Принимаешь решения",
             description = "Решай, что потратить, а что сохранить."
         )
@@ -344,7 +312,7 @@ private fun TutorialDay() {
 
         TutorialStep(
             number = "3",
-            icon = "🎯",
+            icon = "icon_target",
             title = "Копишь на мечту",
             description = "Каждая отложенная монетка приближает тебя к цели."
         )
@@ -353,7 +321,7 @@ private fun TutorialDay() {
 
         TutorialStep(
             number = "4",
-            icon = "🌙",
+            icon = "icon_day",
             title = "Заканчиваешь день",
             description = "Смотришь результат и переходишь к следующему дню."
         )
@@ -526,10 +494,7 @@ private fun TutorialStep(
 
         Spacer(modifier = Modifier.size(12.dp))
 
-        Text(
-            text = icon,
-            fontSize = 30.sp
-        )
+        AppIcon(icon, "•", 40.dp)   // картинка из drawable по имени
 
         Spacer(modifier = Modifier.size(12.dp))
 

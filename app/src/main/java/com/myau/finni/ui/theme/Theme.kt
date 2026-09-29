@@ -1,57 +1,46 @@
 package com.myau.finni.ui.theme
 
-import android.app.Activity
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import com.myau.finni.Bg
+import com.myau.finni.Danger
+import com.myau.finni.Ink
+import com.myau.finni.Line
+import com.myau.finni.Mint
+import com.myau.finni.Primary
+import com.myau.finni.PrimarySoft
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+/**
+ * Одна светлая тема с цветами Финни.
+ * Раньше тема брала цвета из обоев телефона (dynamic color) и включала
+ * тёмный режим — поэтому стандартные кнопки были серо-синими.
+ */
+private val FinniColors = lightColorScheme(
+    primary = Primary,
     onPrimary = Color.White,
+    primaryContainer = PrimarySoft,
+    onPrimaryContainer = Primary,
+    secondary = Mint,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiary = Color(0xFFF2B51F),
+    background = Bg,
+    onBackground = Ink,
+    surface = Color.White,
+    onSurface = Ink,
+    surfaceVariant = PrimarySoft,
+    onSurfaceVariant = Ink,
+    outline = Line,
+    error = Danger
 )
 
 @Composable
 fun FINNITheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = FinniColors,
         typography = Typography,
         content = content
     )
